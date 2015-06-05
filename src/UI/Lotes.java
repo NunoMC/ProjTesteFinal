@@ -249,7 +249,7 @@ public class Lotes extends javax.swing.JPanel {
          
             
           //falta por os produtos a aparecer na combobox!!
-            PreencheCombo();
+          
             l.setPreco(Double.valueOf(lotePrec.getText()));
             l.setQtdcompra(Double.valueOf(LoteQtd.getText()));
             l.setQtdlixo(Double.valueOf(LoteProdEst.getText()));
@@ -295,18 +295,7 @@ public class Lotes extends javax.swing.JPanel {
         }
 
     }
-    
-     public void PreencheCombo() {
-           
-            for (Produto p : list) {
-            
-         
-            comboProd.addItem(p.getDescricao());
-           
-            }
-        
-
-    }
+   
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField LoteProdEst;
