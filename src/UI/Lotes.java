@@ -26,10 +26,10 @@ public class Lotes extends javax.swing.JPanel {
 
     private Lote l;
     private Produto prod;    
-    List<Produto> list;
+
     public Lotes() {
         initComponents();
-        List<Produto> list = ProdutoBLL.retrieveALL();
+
         l = new Lote();
         prod = new Produto();
      
