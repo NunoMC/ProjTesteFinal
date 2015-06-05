@@ -33,6 +33,19 @@ public class Lotes extends javax.swing.JPanel {
         l = new Lote();
         prod = new Produto();
      
+        
+ List<String> lista = new ArrayList<>(); 
+    comboProd.removeAllItems();
+    
+    for(Produto p : ProdutoBLL.retrieveALL())
+    {
+        lista.add(p.getDescricao());
+    }
+
+for (int registro = 0; registro < lista.size(); registro++){ 
+comboProd.addItem(lista.get(registro)); 
+        
+}
         actualizaDados();
     }
 
@@ -248,8 +261,13 @@ public class Lotes extends javax.swing.JPanel {
         } else {
          
             
-          //falta por os produtos a aparecer na combobox!!
-          
+     
+           String idItem = (String) comboProd.getSelectedItem();
+           
+           System.out.println(idItem);
+           Produto p = ProdutoBLL.retrieveDesc(idItem);
+          l.setIdProduto(p);
+           System.out.println(ProdutoBLL.retrieveDesc(idItem));
             l.setPreco(Double.valueOf(lotePrec.getText()));
             l.setQtdcompra(Double.valueOf(LoteQtd.getText()));
             l.setQtdlixo(Double.valueOf(LoteProdEst.getText()));
