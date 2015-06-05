@@ -8,6 +8,7 @@ package projectoii;
 import UI.Login;
 import UI.registo;
 import bll.ClienteBLL;
+import bll.LoteBLL;
 import bll.ProdutoBLL;
 import bll.VendaBLL;
 import bll.funcionarioBLL;
@@ -34,14 +35,16 @@ public class ProjectoII {
     /**
      * @param args the command line arguments
      */
+    
+  
    
     public static void main(String[] args) {
      
         
-        Login v = new Login();
+       Login v = new Login();
         v.setVisible(true);
-        
-        
+      
+  
             }
 
         

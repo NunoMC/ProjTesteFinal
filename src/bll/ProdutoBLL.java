@@ -54,6 +54,20 @@ public class ProdutoBLL {
         }
         return null;
     }
+    
+           public static Produto retrieveDesc(String desc){
+        EntityManager em = BLLEntityManager.getEntityManager();
+        
+        Query q = em.createNativeQuery("Select * from Produto where DESCRICAO = ?",Produto.class);
+        q.setParameter (1,desc) ; 
+         if(!q.getResultList().isEmpty()){
+             Produto prod = (Produto)q.getResultList().get(0);
+        return prod;
+         }
+        
+        return null; 
+    }
+    
 
    
    public static List<Produto> retrieveALL()
@@ -64,6 +78,7 @@ public class ProdutoBLL {
         listaprod = q.getResultList();
         return listaprod; 
     }
+   
  
     public static void refreshEntity(Produto prod)
     {

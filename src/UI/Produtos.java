@@ -11,6 +11,7 @@ import bll.ProdutoBLL;
 import java.math.BigDecimal;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import model.Lote;
 import model.Produto;
 
 /**
@@ -254,8 +255,11 @@ public class Produtos extends javax.swing.JPanel {
            
              int id = Integer.parseInt(model.getValueAt(tableProd.getSelectedRow(), 2).toString());
              
-            
+              for(Lote a: LoteBLL.retrieveProduto(id)){
+             LoteBLL.delete(a);
+              }
             ProdutoBLL.delete(ProdutoBLL.retrieve(id));
+
             ProdDesc.setText("");
             ProdPrec.setText("");
             actualizaDados();

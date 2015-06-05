@@ -44,6 +44,14 @@ public class LoteBLL {
         
     }
     
+     public static List<Lote> retrieveProduto(int id){
+        List<Lote> lts = new ArrayList<>();
+        EntityManager em = BLLEntityManager.getEntityManager();
+        Query q = em.createNativeQuery("Select * from lote where id_Produto = ?",Lote.class);
+        q.setParameter (1,id) ; 
+        lts = q.getResultList();
+        return lts; 
+    }
     
       public static List<Lote> retrieveAll(){
         List<Lote> lts = new ArrayList<>();
