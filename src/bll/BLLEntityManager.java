@@ -13,7 +13,7 @@ import javax.persistence.Persistence;
  *
  * @author NunoM
  */
-class BLLEntityManager {
+public class BLLEntityManager {
  private static final String PERSISTENCE_UNIT_NAME =
                                              "ProjectoIIPU";
     private static EntityManagerFactory factory;

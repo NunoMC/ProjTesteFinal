@@ -255,7 +255,7 @@ public class Produtos extends javax.swing.JPanel {
            
              int id = Integer.parseInt(model.getValueAt(tableProd.getSelectedRow(), 2).toString());
              
-              for(Lote a: LoteBLL.retrieveProduto(id)){
+              for(Lote a: LoteBLL.retrieveLote(id)){
              LoteBLL.delete(a);
               }
             ProdutoBLL.delete(ProdutoBLL.retrieve(id));

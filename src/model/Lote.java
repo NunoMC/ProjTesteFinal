@@ -54,6 +54,7 @@ public class Lote implements Serializable {
         allocationSize=1
     )
     @Id
+     
     @GeneratedValue(strategy=SEQUENCE, generator="seqLote")
     @Column(name="ID_LOTE", nullable = false)
     private Integer idLote;

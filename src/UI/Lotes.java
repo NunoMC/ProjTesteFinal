@@ -6,6 +6,7 @@
 package UI;
 
 import antlr.Parser;
+import bll.BLLEntityManager;
 import bll.LoteBLL;
 import bll.ProdutoBLL;
 import java.math.BigDecimal;
@@ -13,10 +14,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Lote;
 import model.Produto;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 /**
  *
@@ -99,6 +104,11 @@ comboProd.addItem(lista.get(registro));
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        tabLote.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabLoteMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tabLote);
@@ -254,7 +264,7 @@ comboProd.addItem(lista.get(registro));
 
     private void btNovo2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btNovo2ActionPerformed
         if (lotePrec.getText().isEmpty() || LoteProdEst.getText().isEmpty() || LoteQtd.getText().isEmpty()
-                || QtdAtual.getText().isEmpty() || jDateChooser1.getDateFormatString().isEmpty()) {
+               /*|| QtdAtual.getText().isEmpty()*/ || jDateChooser1.getDateFormatString().isEmpty()) {
             String messag = "Campos Vazios!!";
             String titl = "Insira Nome e Morada";
             int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
@@ -264,36 +274,39 @@ comboProd.addItem(lista.get(registro));
      
            String idItem = (String) comboProd.getSelectedItem();
            
-           System.out.println(idItem);
            Produto p = ProdutoBLL.retrieveDesc(idItem);
-          l.setIdProduto(p);
-           System.out.println(ProdutoBLL.retrieveDesc(idItem));
+
             l.setPreco(Double.valueOf(lotePrec.getText()));
             l.setQtdcompra(Double.valueOf(LoteQtd.getText()));
             l.setQtdlixo(Double.valueOf(LoteProdEst.getText()));
-            l.setQuantidade(Double.valueOf(QtdAtual.getText()));
-            l.setIdProduto(prod);
-            java.sql.Date JavaDateObject = new java.sql.Date(Calendar.getInstance().getTime().getTime());
+          //  l.setQuantidade(Double.valueOf(0));
+            l.setIdProduto(p);
             Calendar calendar = new GregorianCalendar();
-            calendar.set(Calendar.YEAR, 2014);
-            calendar.set(Calendar.MONTH, 10 - 1);
-            calendar.set(Calendar.DAY_OF_MONTH, 3);
             l.setDataChegada(calendar.getTime());
 
             LoteBLL.create(l);
 
-            actualizaDados();
+         actualizaDados();
 
         }
     }//GEN-LAST:event_btNovo2ActionPerformed
+
+    private void comboProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboProdActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboProdActionPerformed
 
     private void QtdAtualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QtdAtualActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_QtdAtualActionPerformed
 
-    private void comboProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboProdActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboProdActionPerformed
+    private void tabLoteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabLoteMouseClicked
+   DefaultTableModel model = (DefaultTableModel) tabLote.getModel();
+        //comboProd.setText(model.getValueAt(tabLote.getSelectedRow(),0).toString());
+        //jDateChooser1.setText(model.getValueAt(tabLote.getSelectedRow(),1).toString());
+        lotePrec.setText(model.getValueAt(tabLote.getSelectedRow(),2).toString());
+        LoteProdEst.setText(model.getValueAt(tabLote.getSelectedRow(),3).toString());
+        LoteQtd.setText(model.getValueAt(tabLote.getSelectedRow(),4).toString());
+    }//GEN-LAST:event_tabLoteMouseClicked
 
     public void limparJTable() {
         javax.swing.table.DefaultTableModel model2 = (javax.swing.table.DefaultTableModel) tabLote.getModel();
@@ -303,7 +316,7 @@ comboProd.addItem(lista.get(registro));
     public void actualizaDados() {
 
         limparJTable();
-
+        
         if (LoteBLL.retrieveAll() != null) {
             javax.swing.table.DefaultTableModel model1 = (javax.swing.table.DefaultTableModel) tabLote.getModel();
             for (Lote a : LoteBLL.retrieveAll()) {
