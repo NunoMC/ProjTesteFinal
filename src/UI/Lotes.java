@@ -9,11 +9,19 @@ import antlr.Parser;
 import bll.BLLEntityManager;
 import bll.LoteBLL;
 import bll.ProdutoBLL;
+import com.toedter.calendar.JCalendar;
+import com.toedter.calendar.JDateChooser;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -30,27 +38,26 @@ import javax.persistence.Query;
 public class Lotes extends javax.swing.JPanel {
 
     private Lote l;
-    private Produto prod;    
+    private Produto prod;
 
     public Lotes() {
         initComponents();
 
+    //  ((J)jDateChooser1.getDateEditor()).setEditable(false);
         l = new Lote();
         prod = new Produto();
-     
-        
- List<String> lista = new ArrayList<>(); 
-    comboProd.removeAllItems();
-    
-    for(Produto p : ProdutoBLL.retrieveALL())
-    {
-        lista.add(p.getDescricao());
-    }
 
-for (int registro = 0; registro < lista.size(); registro++){ 
-comboProd.addItem(lista.get(registro)); 
-        
-}
+        List<String> lista = new ArrayList<>();
+        comboProd.removeAllItems();
+
+        for (Produto p : ProdutoBLL.retrieveALL()) {
+            lista.add(p.getDescricao());
+        }
+
+        for (int registro = 0; registro < lista.size(); registro++) {
+            comboProd.addItem(lista.get(registro));
+
+        }
         actualizaDados();
     }
 
@@ -264,29 +271,27 @@ comboProd.addItem(lista.get(registro));
 
     private void btNovo2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btNovo2ActionPerformed
         if (lotePrec.getText().isEmpty() || LoteProdEst.getText().isEmpty() || LoteQtd.getText().isEmpty()
-               /*|| QtdAtual.getText().isEmpty()*/ || jDateChooser1.getDateFormatString().isEmpty()) {
+                /*|| QtdAtual.getText().isEmpty()*/ || jDateChooser1.getDateFormatString().isEmpty()) {
             String messag = "Campos Vazios!!";
             String titl = "Insira Nome e Morada";
             int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
         } else {
-         
-            
-     
-           String idItem = (String) comboProd.getSelectedItem();
-           
-           Produto p = ProdutoBLL.retrieveDesc(idItem);
+
+            String idItem = (String) comboProd.getSelectedItem();
+
+            Produto p = ProdutoBLL.retrieveDesc(idItem);
 
             l.setPreco(Double.valueOf(lotePrec.getText()));
             l.setQtdcompra(Double.valueOf(LoteQtd.getText()));
             l.setQtdlixo(Double.valueOf(LoteProdEst.getText()));
-          //  l.setQuantidade(Double.valueOf(0));
+            //  l.setQuantidade(Double.valueOf(0));
             l.setIdProduto(p);
             Calendar calendar = new GregorianCalendar();
             l.setDataChegada(calendar.getTime());
 
             LoteBLL.create(l);
 
-         actualizaDados();
+            actualizaDados();
 
         }
     }//GEN-LAST:event_btNovo2ActionPerformed
@@ -300,12 +305,23 @@ comboProd.addItem(lista.get(registro));
     }//GEN-LAST:event_QtdAtualActionPerformed
 
     private void tabLoteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabLoteMouseClicked
-   DefaultTableModel model = (DefaultTableModel) tabLote.getModel();
-        //comboProd.setText(model.getValueAt(tabLote.getSelectedRow(),0).toString());
-        //jDateChooser1.setText(model.getValueAt(tabLote.getSelectedRow(),1).toString());
-        lotePrec.setText(model.getValueAt(tabLote.getSelectedRow(),2).toString());
-        LoteProdEst.setText(model.getValueAt(tabLote.getSelectedRow(),3).toString());
-        LoteQtd.setText(model.getValueAt(tabLote.getSelectedRow(),4).toString());
+     
+        DefaultTableModel model = (DefaultTableModel) tabLote.getModel();
+
+        String idItem = model.getValueAt(tabLote.getSelectedRow(), 0).toString();
+        comboProd.setSelectedItem(idItem);
+        String data = (String) model.getValueAt(tabLote.getSelectedRow(),1);
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = null;
+        try {
+            date = df.parse(data);
+        } catch (ParseException ex) {
+            Logger.getLogger(Lotes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        jDateChooser1.setDate(date);
+        lotePrec.setText(model.getValueAt(tabLote.getSelectedRow(), 2).toString());
+        LoteProdEst.setText(model.getValueAt(tabLote.getSelectedRow(), 3).toString());
+        LoteQtd.setText(model.getValueAt(tabLote.getSelectedRow(), 4).toString());
     }//GEN-LAST:event_tabLoteMouseClicked
 
     public void limparJTable() {
@@ -316,18 +332,22 @@ comboProd.addItem(lista.get(registro));
     public void actualizaDados() {
 
         limparJTable();
-        
+
         if (LoteBLL.retrieveAll() != null) {
             javax.swing.table.DefaultTableModel model1 = (javax.swing.table.DefaultTableModel) tabLote.getModel();
             for (Lote a : LoteBLL.retrieveAll()) {
-                model1.addRow(new Object[]{a.getIdProduto().getDescricao(), a.getDataChegada(),
+                DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                Date startDate;
+                String newDateString = df.format(a.getDataChegada());
+
+                model1.addRow(new Object[]{a.getIdProduto().getDescricao(),newDateString ,
                     a.getQtdlixo(), a.getPreco(), a.getQtdcompra(), a.getQuantidade(), a.getIdLote()});
             }
         }
 
     }
-   
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField LoteProdEst;
     private javax.swing.JTextField LoteQtd;
@@ -351,8 +371,4 @@ comboProd.addItem(lista.get(registro));
     private javax.swing.JTable tabLote;
     // End of variables declaration//GEN-END:variables
 
-    
-   
-    
 }
-
