@@ -239,7 +239,7 @@ public class Produtos extends javax.swing.JPanel {
                 int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
             } else {
                 String messag = "Aviso!!";
-                String titl = "Selecione um Cliente";
+                String titl = "Selecione um Produto";
                 int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
             }
         } else {

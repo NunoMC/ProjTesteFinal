@@ -7,6 +7,7 @@ package UI;
 
 import java.awt.FlowLayout;
 import java.util.HashMap;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -102,7 +103,7 @@ public class MenuFunc extends javax.swing.JFrame {
 
         vendas.setText("Vendas");
 
-        InsVendas.setText("Inserir");
+        InsVendas.setText("Listar");
         InsVendas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 InsVendasActionPerformed(evt);
@@ -137,6 +138,11 @@ public class MenuFunc extends javax.swing.JFrame {
         jMenuBar1.add(marcacoes);
 
         sair.setText("Sair");
+        sair.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sairMouseClicked(evt);
+            }
+        });
         jMenuBar1.add(sair);
 
         setJMenuBar(jMenuBar1);
@@ -229,6 +235,21 @@ public class MenuFunc extends javax.swing.JFrame {
         jPanel1.add(views.get(marcacao));
         this.repaint();
     }//GEN-LAST:event_ListMarcActionPerformed
+
+    private void sairMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sairMouseClicked
+            String messag = "Terminar Sessao?";
+            String titl = "Sair!!";
+            int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.YES_NO_OPTION);
+            
+             if (reply == JOptionPane.YES_OPTION) {
+            this.dispose();
+            Login log = new Login();
+            this.setVisible(false);
+            log.setVisible(true);
+
+        }
+             else this.setVisible(true);
+    }//GEN-LAST:event_sairMouseClicked
 
     /**
      * @param args the command line arguments

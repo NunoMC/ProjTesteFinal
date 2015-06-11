@@ -9,6 +9,7 @@ import java.awt.FlowLayout;
 import java.util.HashMap;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 
 /**
@@ -95,6 +96,11 @@ public class MenuAdmin extends javax.swing.JFrame {
         jMenuBar1.add(GerirInform);
 
         sair.setText("Sair");
+        sair.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sairMouseClicked(evt);
+            }
+        });
         jMenuBar1.add(sair);
 
         setJMenuBar(jMenuBar1);
@@ -144,6 +150,21 @@ public class MenuAdmin extends javax.swing.JFrame {
         jPanel1.add(views.get(gerarInfopanel));
         this.repaint();
     }//GEN-LAST:event_GerirInformMouseClicked
+
+    private void sairMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sairMouseClicked
+          String messag = "Terminar Sessao?";
+            String titl = "Sair!!";
+            int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.YES_NO_OPTION);
+            
+             if (reply == JOptionPane.YES_OPTION) {
+            this.dispose();
+            Login log = new Login();
+            this.setVisible(false);
+            log.setVisible(true);
+
+        }
+             else this.setVisible(true);
+    }//GEN-LAST:event_sairMouseClicked
 
     /**
      * @param args the command line arguments
