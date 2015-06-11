@@ -286,6 +286,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Editar"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btEditMouseClicked"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btElim">
       <Properties>

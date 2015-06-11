@@ -20,20 +20,17 @@ import static oracle.jrockit.jfr.events.Bits.intValue;
  * @author NunoM
  */
 public class Clientes extends javax.swing.JPanel {
-    
-     
-     private Cliente cl;
-     
-     
+
+    private Cliente cl;
+
     /**
      * Creates new form Clientes
      */
     public Clientes() {
         initComponents();
-       cl = new Cliente();
-     
+
         actualizaDados();
-        
+
     }
 
     /**
@@ -199,58 +196,51 @@ public class Clientes extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btNovo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btNovo1ActionPerformed
-       
-           if( CliNome.getText().isEmpty() || CliMorada.getText().isEmpty()){
+
+        if (CliNome.getText().isEmpty() || CliMorada.getText().isEmpty()) {
             String messag = "Campos Vazios!!";
             String titl = "Insira Nome e Morada";
             int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
-           }
-         else{
-     
-        
-        cl.setNome(CliNome.getText());
-        cl.setMorada(CliMorada.getText());
-        ClienteBLL.create(cl);
-        
-     
-        actualizaDados();
-        
-         
-     
-                 }
-        
-        
+        } else {
+
+            cl = new Cliente();
+            cl.setNome(CliNome.getText());
+            cl.setMorada(CliMorada.getText());
+            ClienteBLL.create(cl);
+
+            actualizaDados();
+
+        }
+
+
     }//GEN-LAST:event_btNovo1ActionPerformed
 
     private void tableCliMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableCliMouseReleased
-     
+
     }//GEN-LAST:event_tableCliMouseReleased
 
     private void btEdit1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEdit1ActionPerformed
         DefaultTableModel model = (DefaultTableModel) tableCli.getModel();
-        if(tableCli.getSelectedRow()==-1){
-            if(tableCli.getRowCount()==0){
-            String messag = "Tabela Vazia!!";
-            String titl = "Sem dados";
-            int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
-            }else{
-            String messag = "Aviso!!";
-            String titl = "Selecione um Cliente";
-            int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+        if (tableCli.getSelectedRow() == -1) {
+            if (tableCli.getRowCount() == 0) {
+                String messag = "Tabela Vazia!!";
+                String titl = "Sem dados";
+                int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+            } else {
+                String messag = "Aviso!!";
+                String titl = "Selecione um Cliente";
+                int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
             }
-        }
-        else{
-             
-            
-             
-           int id = Integer.parseInt(model.getValueAt(tableCli.getSelectedRow(), 2).toString());
-             
+        } else {
+
+            int id = Integer.parseInt(model.getValueAt(tableCli.getSelectedRow(), 2).toString());
+
             cl = ClienteBLL.retrieve(id);
             cl.setNome(CliNome.getText());
             cl.setMorada(CliMorada.getText());
             ClienteBLL.refreshEntity(cl);
             actualizaDados();
-            
+
             String messag = "Com Sucesso!!";
             String titl = "Editado";
             int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
@@ -259,26 +249,25 @@ public class Clientes extends javax.swing.JPanel {
 
     private void tableCliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableCliMouseClicked
         DefaultTableModel model = (DefaultTableModel) tableCli.getModel();
-        CliNome.setText(model.getValueAt(tableCli.getSelectedRow(),0).toString());
-        CliMorada.setText(model.getValueAt(tableCli.getSelectedRow(),1).toString());
+        CliNome.setText(model.getValueAt(tableCli.getSelectedRow(), 0).toString());
+        CliMorada.setText(model.getValueAt(tableCli.getSelectedRow(), 1).toString());
     }//GEN-LAST:event_tableCliMouseClicked
 
     private void btElim1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btElim1ActionPerformed
-         DefaultTableModel model = (DefaultTableModel) tableCli.getModel();
-        if(tableCli.getSelectedRow()==-1){
-            if(tableCli.getRowCount()==0){
-            String messag = "Tabela Vazia!!";
-            String titl = "Sem dados";
-            int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
-            }else{
-            String messag = "Aviso!!";
-            String titl = "Selecione um Cliente";
-            int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+        DefaultTableModel model = (DefaultTableModel) tableCli.getModel();
+        if (tableCli.getSelectedRow() == -1) {
+            if (tableCli.getRowCount() == 0) {
+                String messag = "Tabela Vazia!!";
+                String titl = "Sem dados";
+                int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+            } else {
+                String messag = "Aviso!!";
+                String titl = "Selecione um Cliente";
+                int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
             }
-        }
-        else{
-           
-             int id = Integer.parseInt(model.getValueAt(tableCli.getSelectedRow(), 2).toString());
+        } else {
+
+            int id = Integer.parseInt(model.getValueAt(tableCli.getSelectedRow(), 2).toString());
             ClienteBLL.delete(ClienteBLL.retrieve(id));
             CliNome.setText("");
             CliMorada.setText("");
@@ -293,23 +282,23 @@ public class Clientes extends javax.swing.JPanel {
 
     }//GEN-LAST:event_CliNomeKeyReleased
 
-    public void limparJTable(){
-        javax.swing.table.DefaultTableModel model2 = (javax.swing.table.DefaultTableModel)tableCli.getModel();
+    public void limparJTable() {
+        javax.swing.table.DefaultTableModel model2 = (javax.swing.table.DefaultTableModel) tableCli.getModel();
         model2.setRowCount(0);
     }
- 
-    public void actualizaDados(){
-    
-    limparJTable();
-    if(ClienteBLL.retrieveALL()!=null){
-        javax.swing.table.DefaultTableModel model1 = (javax.swing.table.DefaultTableModel)tableCli.getModel();
-        for(Cliente a: ClienteBLL.retrieveALL()){
-                 model1.addRow(new Object[]{a.getNome(), a.getMorada(), a.getIdCliente()});
+
+    public void actualizaDados() {
+
+        limparJTable();
+        if (ClienteBLL.retrieveALL() != null) {
+            javax.swing.table.DefaultTableModel model1 = (javax.swing.table.DefaultTableModel) tableCli.getModel();
+            for (Cliente a : ClienteBLL.retrieveALL()) {
+                model1.addRow(new Object[]{a.getNome(), a.getMorada(), a.getIdCliente()});
+            }
         }
+
     }
-    
-    }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField CliMorada;
     private javax.swing.JTextField CliNome;
@@ -324,6 +313,5 @@ public class Clientes extends javax.swing.JPanel {
     private javax.swing.JLabel labelRecebeFunc1;
     private javax.swing.JTable tableCli;
     // End of variables declaration//GEN-END:variables
- 
- 
+
 }

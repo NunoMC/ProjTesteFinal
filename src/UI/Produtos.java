@@ -20,17 +20,14 @@ import model.Produto;
  */
 public class Produtos extends javax.swing.JPanel {
 
-  
     private Produto pr;
-    
+
     public Produtos() {
         initComponents();
-        
-           Login l = new Login();
-         pr = new Produto();
+
+        Login l = new Login();
+
          // labelRecebeFunc.setText("aa");
-        
-        
         actualizaDados();
     }
 
@@ -179,85 +176,79 @@ public class Produtos extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btNovoActionPerformed
-  
-           if( ProdDesc.getText().isEmpty() || ProdPrec.getText().isEmpty()){
+
+        if (ProdDesc.getText().isEmpty() || ProdPrec.getText().isEmpty()) {
             String messag = "Campos Vazios!!";
             String titl = "Insira descrição e preço";
             int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
-           }
-         else{
-     
-        
-        pr.setDescricao(ProdDesc.getText());
-        pr.setPreco(new BigDecimal(ProdPrec.getText()));
-        ProdutoBLL.create(pr);
-        
-     
-        actualizaDados();
+        } else {
 
-                 }
+            pr = new Produto();
+            pr.setDescricao(ProdDesc.getText());
+            pr.setPreco(new BigDecimal(ProdPrec.getText()));
+            ProdutoBLL.create(pr);
+
+            actualizaDados();
+
+        }
 
     }//GEN-LAST:event_btNovoActionPerformed
 
     private void btEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditActionPerformed
-     DefaultTableModel model = (DefaultTableModel) tableProd.getModel();
-        if(tableProd.getSelectedRow()==-1){
-            if(tableProd.getRowCount()==0){
-            String messag = "Tabela Vazia!!";
-            String titl = "Sem dados";
-            int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
-            }else{
-            String messag = "Aviso!!";
-            String titl = "Selecione um Cliente";
-            int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+        DefaultTableModel model = (DefaultTableModel) tableProd.getModel();
+        if (tableProd.getSelectedRow() == -1) {
+            if (tableProd.getRowCount() == 0) {
+                String messag = "Tabela Vazia!!";
+                String titl = "Sem dados";
+                int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+            } else {
+                String messag = "Aviso!!";
+                String titl = "Selecione um Produto";
+                int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
             }
-        }
-        else{
-             
-            
-             
-           int id = Integer.parseInt(model.getValueAt(tableProd.getSelectedRow(), 2).toString());
-             
+        } else {
+
+            int id = Integer.parseInt(model.getValueAt(tableProd.getSelectedRow(), 2).toString());
+
             pr = ProdutoBLL.retrieve(id);
             pr.setDescricao(ProdDesc.getText());
             pr.setPreco(new BigDecimal(ProdPrec.getText()));
             ProdutoBLL.refreshEntity(pr);
             actualizaDados();
-            
+
             String messag = "Com Sucesso!!";
             String titl = "Editado";
             int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
         }
-                                           
+
 
     }//GEN-LAST:event_btEditActionPerformed
 
     private void tableProdMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableProdMouseClicked
-    DefaultTableModel model = (DefaultTableModel) tableProd.getModel();
-        ProdDesc.setText(model.getValueAt(tableProd.getSelectedRow(),0).toString());
-        ProdPrec.setText(model.getValueAt(tableProd.getSelectedRow(),1).toString());
+        DefaultTableModel model = (DefaultTableModel) tableProd.getModel();
+        ProdDesc.setText(model.getValueAt(tableProd.getSelectedRow(), 0).toString());
+        ProdPrec.setText(model.getValueAt(tableProd.getSelectedRow(), 1).toString());
     }//GEN-LAST:event_tableProdMouseClicked
 
     private void btElimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btElimActionPerformed
-     DefaultTableModel model = (DefaultTableModel) tableProd.getModel();
-        if(tableProd.getSelectedRow()==-1){
-            if(tableProd.getRowCount()==0){
-            String messag = "Tabela Vazia!!";
-            String titl = "Sem dados";
-            int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
-            }else{
-            String messag = "Aviso!!";
-            String titl = "Selecione um Cliente";
-            int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+        DefaultTableModel model = (DefaultTableModel) tableProd.getModel();
+        if (tableProd.getSelectedRow() == -1) {
+            if (tableProd.getRowCount() == 0) {
+                String messag = "Tabela Vazia!!";
+                String titl = "Sem dados";
+                int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+            } else {
+                String messag = "Aviso!!";
+                String titl = "Selecione um Cliente";
+                int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
             }
-        }
-        else{
-           
-             int id = Integer.parseInt(model.getValueAt(tableProd.getSelectedRow(), 2).toString());
-             
-              for(Lote a: LoteBLL.retrieveLote(id)){
-             LoteBLL.delete(a);
-              }
+        } else {
+
+            int id = Integer.parseInt(model.getValueAt(tableProd.getSelectedRow(), 2).toString());
+
+            for (Lote a : LoteBLL.retrieveLote(id)) {
+                LoteBLL.delete(a);
+            }
             ProdutoBLL.delete(ProdutoBLL.retrieve(id));
 
             ProdDesc.setText("");
@@ -269,21 +260,21 @@ public class Produtos extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btElimActionPerformed
 
-      public void limparJTable(){
-        javax.swing.table.DefaultTableModel model2 = (javax.swing.table.DefaultTableModel)tableProd.getModel();
+    public void limparJTable() {
+        javax.swing.table.DefaultTableModel model2 = (javax.swing.table.DefaultTableModel) tableProd.getModel();
         model2.setRowCount(0);
     }
-    
-      public void actualizaDados(){
-    
-    limparJTable();
-    if(ProdutoBLL.retrieveALL()!=null){
-        javax.swing.table.DefaultTableModel model1 = (javax.swing.table.DefaultTableModel)tableProd.getModel();
-        for(Produto a: ProdutoBLL.retrieveALL()){
-                 model1.addRow(new Object[]{a.getDescricao(), a.getPreco(), a.getIdProduto()});
+
+    public void actualizaDados() {
+
+        limparJTable();
+        if (ProdutoBLL.retrieveALL() != null) {
+            javax.swing.table.DefaultTableModel model1 = (javax.swing.table.DefaultTableModel) tableProd.getModel();
+            for (Produto a : ProdutoBLL.retrieveALL()) {
+                model1.addRow(new Object[]{a.getDescricao(), a.getPreco(), a.getIdProduto()});
+            }
         }
-    }
-    
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

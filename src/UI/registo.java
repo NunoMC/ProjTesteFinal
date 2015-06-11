@@ -6,12 +6,14 @@
 package UI;
 
 import bll.Ficheiro;
+import bll.funcionarioBLL;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import model.Funcionario;
 
 /**
  *
@@ -20,6 +22,7 @@ import javax.swing.UIManager;
 public class registo extends javax.swing.JFrame {
 
     Ficheiro f = new Ficheiro();
+    Funcionario fu;
 
     String[] dados = {"", "Funcionário", "Administrador"};
 
@@ -210,10 +213,9 @@ public class registo extends javax.swing.JFrame {
         String message = "Escolha como quer entrar!!";
         String title = "Campo entrar vazio";
         String[] dad = {"Funcionário", "Administrador"};
-        
 
         String idItem = (String) ComboBox.getSelectedItem();
-
+        fu = new Funcionario();
         //verica se os campos estao vazios
         if (!UserReg.getText().equals("") && !PassReg.getText().equals("")) {
 
@@ -226,6 +228,11 @@ public class registo extends javax.swing.JFrame {
                         Logger.getLogger(registo.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     f.escreverFicheiro(UserReg.getText(), PassReg.getText(), nomeArq2);
+                    fu.setNome(UserReg.getText());
+                    funcionarioBLL.create(fu);
+                    Login log = new Login();
+                    this.setVisible(false);
+                    log.setVisible(true);
                 } catch (IOException ex) {
                     Logger.getLogger(registo.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -238,28 +245,35 @@ public class registo extends javax.swing.JFrame {
 
                 try {
                     f.escreverFicheiro(UserReg.getText(), PassReg.getText(), nomeArq);
+                    Login log = new Login();
+                    this.setVisible(false);
+                    log.setVisible(true);
                 } catch (IOException ex) {
                     Logger.getLogger(registo.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
-            else{
+            } else {
                 String reply = (String) JOptionPane.showInputDialog(this, message, title, WIDTH, null, dad, dad[0]);
-            if (reply.equalsIgnoreCase("Funcionário")) {
-                try {
-
+                if (reply.equalsIgnoreCase("Funcionário")) {
                     try {
-                        f.criarFicheiro(nomeArq2);
+
+                        try {
+                            f.criarFicheiro(nomeArq2);
+                        } catch (IOException ex) {
+                            Logger.getLogger(registo.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        f.escreverFicheiro(UserReg.getText(), PassReg.getText(), nomeArq2);
+                        fu.setNome(UserReg.getText());
+                        funcionarioBLL.create(fu);
+                        Login log = new Login();
+                        this.setVisible(false);
+                        log.setVisible(true);
                     } catch (IOException ex) {
                         Logger.getLogger(registo.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    f.escreverFicheiro(UserReg.getText(), PassReg.getText(), nomeArq2);
-                } catch (IOException ex) {
-                    Logger.getLogger(registo.class.getName()).log(Level.SEVERE, null, ex);
 
+                    }
                 }
             }
-        } 
-        }else {
+        } else {
             String messag = "Campos Vazios!!";
             String titl = "Insira dados";
             int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);

@@ -43,10 +43,6 @@ public class Lotes extends javax.swing.JPanel {
     public Lotes() {
         initComponents();
 
-    //  ((J)jDateChooser1.getDateEditor()).setEditable(false);
-        l = new Lote();
-        prod = new Produto();
-
         List<String> lista = new ArrayList<>();
         comboProd.removeAllItems();
 
@@ -155,6 +151,11 @@ public class Lotes extends javax.swing.JPanel {
         });
 
         btEdit.setText("Editar");
+        btEdit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btEditMouseClicked(evt);
+            }
+        });
 
         btElim.setText("Eliminar");
 
@@ -276,7 +277,8 @@ public class Lotes extends javax.swing.JPanel {
             String titl = "Insira Nome e Morada";
             int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
         } else {
-
+            l = new Lote();
+            prod = new Produto();
             String idItem = (String) comboProd.getSelectedItem();
 
             Produto p = ProdutoBLL.retrieveDesc(idItem);
@@ -284,7 +286,7 @@ public class Lotes extends javax.swing.JPanel {
             l.setPreco(Double.valueOf(lotePrec.getText()));
             l.setQtdcompra(Double.valueOf(LoteQtd.getText()));
             l.setQtdlixo(Double.valueOf(LoteProdEst.getText()));
-            //  l.setQuantidade(Double.valueOf(0));
+
             l.setIdProduto(p);
             Calendar calendar = new GregorianCalendar();
             l.setDataChegada(calendar.getTime());
@@ -305,12 +307,12 @@ public class Lotes extends javax.swing.JPanel {
     }//GEN-LAST:event_QtdAtualActionPerformed
 
     private void tabLoteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabLoteMouseClicked
-     
+
         DefaultTableModel model = (DefaultTableModel) tabLote.getModel();
 
         String idItem = model.getValueAt(tabLote.getSelectedRow(), 0).toString();
         comboProd.setSelectedItem(idItem);
-        String data = (String) model.getValueAt(tabLote.getSelectedRow(),1);
+        String data = (String) model.getValueAt(tabLote.getSelectedRow(), 1);
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         Date date = null;
         try {
@@ -323,6 +325,30 @@ public class Lotes extends javax.swing.JPanel {
         LoteProdEst.setText(model.getValueAt(tabLote.getSelectedRow(), 3).toString());
         LoteQtd.setText(model.getValueAt(tabLote.getSelectedRow(), 4).toString());
     }//GEN-LAST:event_tabLoteMouseClicked
+
+    private void btEditMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btEditMouseClicked
+     DefaultTableModel model = (DefaultTableModel) tabLote.getModel();
+        if (tabLote.getSelectedRow() == -1) {
+            if (tabLote.getRowCount() == 0) {
+                String messag = "Tabela Vazia!!";
+                String titl = "Sem dados";
+                int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+            } else {
+                String messag = "Aviso!!";
+                String titl = "Selecione um Lote";
+                int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+            }
+        } else {
+
+            int id = Integer.parseInt(model.getValueAt(tabLote.getSelectedRow(), 2).toString());
+
+          
+
+            String messag = "Com Sucesso!!";
+            String titl = "Editado";
+            int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+        }
+    }//GEN-LAST:event_btEditMouseClicked
 
     public void limparJTable() {
         javax.swing.table.DefaultTableModel model2 = (javax.swing.table.DefaultTableModel) tabLote.getModel();
@@ -340,7 +366,7 @@ public class Lotes extends javax.swing.JPanel {
                 Date startDate;
                 String newDateString = df.format(a.getDataChegada());
 
-                model1.addRow(new Object[]{a.getIdProduto().getDescricao(),newDateString ,
+                model1.addRow(new Object[]{a.getIdProduto().getDescricao(), newDateString,
                     a.getQtdlixo(), a.getPreco(), a.getQtdcompra(), a.getQuantidade(), a.getIdLote()});
             }
         }
