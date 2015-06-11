@@ -73,5 +73,14 @@ public static void create(Linhaproduto lt)
         lts = q.getResultList();
         return lts; 
     }
+     
+        public static List<Linhaproduto> retrieveLinhaProduto(int id){
+        List<Linhaproduto> lts = new ArrayList<>();
+        EntityManager em = BLLEntityManager.getEntityManager();
+        Query q = em.createNativeQuery("Select * from Linhaproduto where id_Lote = ?",Linhaproduto.class);
+        q.setParameter (1,id) ; 
+        lts = q.getResultList();
+        return lts; 
+    }
 }
 

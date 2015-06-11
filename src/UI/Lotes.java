@@ -7,6 +7,7 @@ package UI;
 
 import antlr.Parser;
 import bll.BLLEntityManager;
+import bll.LinhaProdutoBLL;
 import bll.LoteBLL;
 import bll.ProdutoBLL;
 import com.toedter.calendar.JCalendar;
@@ -30,6 +31,7 @@ import model.Produto;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import model.Linhaproduto;
 
 /**
  *
@@ -368,8 +370,15 @@ public class Lotes extends javax.swing.JPanel {
         } else {
 
             int id = Integer.parseInt(model.getValueAt(tabLote.getSelectedRow(), 6).toString());
+            
+            for (Linhaproduto a : LinhaProdutoBLL.retrieveLinhaProduto(id)) {
+                LinhaProdutoBLL.delete(a);
+            }
+            
+            
             LoteBLL.delete(LoteBLL.retrieve(id));
-
+            
+             
             jDateChooser1.setDate(null);
             lotePrec.setText("");
             LoteProdEst.setText("");
