@@ -71,4 +71,13 @@ public class VendaBLL {
         em.getTransaction().commit();
         em.clear(); 
     }
+    
+     public static List<Venda> retrieveVenda(int id){
+        List<Venda> lts = new ArrayList<>();
+        EntityManager em = BLLEntityManager.getEntityManager();
+        Query q = em.createNativeQuery("Select * from Venda where id_cliente = ?",Venda.class);
+        q.setParameter (1,id) ; 
+        lts = q.getResultList();
+        return lts; 
+    }
 }

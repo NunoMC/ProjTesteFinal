@@ -59,5 +59,21 @@ public class VendaMarcBLL {
         em.getTransaction().commit();
         em.clear();  
     }
-  
+    
+    public static List<VendaMarc> retrieveVendaMarc(int id){
+        List<VendaMarc> lts = new ArrayList<>();
+        EntityManager em = BLLEntityManager.getEntityManager();
+        Query q = em.createNativeQuery("Select * from Venda_Marc where id_marcacao = ?",VendaMarc.class);
+        q.setParameter (1,id) ; 
+        lts = q.getResultList();
+        return lts; 
+    }
+     public static List<VendaMarc> retrieveVendaMarc2(int id){
+        List<VendaMarc> lts = new ArrayList<>();
+        EntityManager em = BLLEntityManager.getEntityManager();
+        Query q = em.createNativeQuery("Select * from Venda_Marc where id_venda = ?",VendaMarc.class);
+        q.setParameter (1,id) ; 
+        lts = q.getResultList();
+        return lts; 
+    }
 }

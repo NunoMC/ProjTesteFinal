@@ -73,4 +73,15 @@ public class MarcacaoBLL {
         marc = q.getResultList();
         return marc; 
     }
+      
+       
+        public static List<Marcacao> retrieveMarc(int id){
+        List<Marcacao> lts = new ArrayList<>();
+        EntityManager em = BLLEntityManager.getEntityManager();
+        Query q = em.createNativeQuery("Select * from Marcacao where id_cliente = ?",Marcacao.class);
+        q.setParameter (1,id) ; 
+        lts = q.getResultList();
+        return lts; 
+    }
+      
 }

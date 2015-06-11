@@ -6,6 +6,9 @@
 package UI;
 
 import bll.ClienteBLL;
+import bll.MarcacaoBLL;
+import bll.VendaBLL;
+import bll.VendaMarcBLL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import model.Cliente;
+import model.Marcacao;
+import model.Venda;
+import model.VendaMarc;
 import static oracle.jrockit.jfr.events.Bits.intValue;
 
 /**
@@ -268,6 +274,21 @@ public class Clientes extends javax.swing.JPanel {
         } else {
 
             int id = Integer.parseInt(model.getValueAt(tableCli.getSelectedRow(), 2).toString());
+            
+               for (VendaMarc vm : VendaMarcBLL.retrieveVendaMarc(id)) {
+                VendaMarcBLL.delete(vm);
+            }
+                 for (VendaMarc vm : VendaMarcBLL.retrieveVendaMarc2(id)) {
+                VendaMarcBLL.delete(vm);
+            }
+                 
+                   for (Marcacao m : MarcacaoBLL.retrieveMarc(id)) {
+                MarcacaoBLL.delete(m);
+            }
+                     for (Venda v : VendaBLL.retrieveVenda(id)) {
+                VendaBLL.delete(v);
+            }
+            
             ClienteBLL.delete(ClienteBLL.retrieve(id));
             CliNome.setText("");
             CliMorada.setText("");
