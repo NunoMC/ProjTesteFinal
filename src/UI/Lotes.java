@@ -84,8 +84,6 @@ public class Lotes extends javax.swing.JPanel {
         btEdit = new javax.swing.JButton();
         btElim = new javax.swing.JButton();
         jDateChooser1 = new com.toedter.calendar.JDateChooser();
-        jLabel8 = new javax.swing.JLabel();
-        QtdAtual = new javax.swing.JTextField();
 
         jLabel1.setFont(new java.awt.Font("Times New Roman", 0, 24)); // NOI18N
         jLabel1.setText("Lotes");
@@ -158,12 +156,9 @@ public class Lotes extends javax.swing.JPanel {
         });
 
         btElim.setText("Eliminar");
-
-        jLabel8.setText("Quantidade Atual:");
-
-        QtdAtual.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                QtdAtualActionPerformed(evt);
+        btElim.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btElimMouseClicked(evt);
             }
         });
 
@@ -184,19 +179,13 @@ public class Lotes extends javax.swing.JPanel {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 802, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 40, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2))
+                        .addGap(30, 30, 30)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel2))
-                                .addGap(30, 30, 30)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
-                                    .addComponent(comboProd, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel8)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(QtdAtual)))
+                            .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
+                            .addComponent(comboProd, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(41, 41, 41)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
@@ -251,10 +240,7 @@ public class Lotes extends javax.swing.JPanel {
                                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                 .addComponent(LoteQtd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addComponent(btElim))
-                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                .addComponent(jLabel7)
-                                                .addComponent(jLabel8)
-                                                .addComponent(QtdAtual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING)))
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel3)
                                         .addGap(0, 0, Short.MAX_VALUE))))
@@ -302,10 +288,6 @@ public class Lotes extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_comboProdActionPerformed
 
-    private void QtdAtualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QtdAtualActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_QtdAtualActionPerformed
-
     private void tabLoteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabLoteMouseClicked
 
         DefaultTableModel model = (DefaultTableModel) tabLote.getModel();
@@ -321,13 +303,13 @@ public class Lotes extends javax.swing.JPanel {
             Logger.getLogger(Lotes.class.getName()).log(Level.SEVERE, null, ex);
         }
         jDateChooser1.setDate(date);
-        lotePrec.setText(model.getValueAt(tabLote.getSelectedRow(), 2).toString());
-        LoteProdEst.setText(model.getValueAt(tabLote.getSelectedRow(), 3).toString());
+        lotePrec.setText(model.getValueAt(tabLote.getSelectedRow(), 3).toString());
+        LoteProdEst.setText(model.getValueAt(tabLote.getSelectedRow(), 2).toString());
         LoteQtd.setText(model.getValueAt(tabLote.getSelectedRow(), 4).toString());
     }//GEN-LAST:event_tabLoteMouseClicked
 
     private void btEditMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btEditMouseClicked
-     DefaultTableModel model = (DefaultTableModel) tabLote.getModel();
+        DefaultTableModel model = (DefaultTableModel) tabLote.getModel();
         if (tabLote.getSelectedRow() == -1) {
             if (tabLote.getRowCount() == 0) {
                 String messag = "Tabela Vazia!!";
@@ -340,15 +322,65 @@ public class Lotes extends javax.swing.JPanel {
             }
         } else {
 
-            int id = Integer.parseInt(model.getValueAt(tabLote.getSelectedRow(), 2).toString());
+            l = new Lote();
+            prod = new Produto();
+            int id = Integer.parseInt(model.getValueAt(tabLote.getSelectedRow(), 6).toString());
 
-          
+           l = LoteBLL.retrieve(id);
+            String idItem = (String) comboProd.getSelectedItem();
+
+            Produto p = ProdutoBLL.retrieveDesc(idItem);
+
+            l.setIdProduto(p);
+            String data = (String) model.getValueAt(tabLote.getSelectedRow(), 1);
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            Date date = null;
+            try {
+                date = df.parse(data);
+            } catch (ParseException ex) {
+                Logger.getLogger(Lotes.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            l.setDataChegada(jDateChooser1.getDate());
+            l.setPreco(new Double(lotePrec.getText()));
+            l.setQtdcompra(new Double(LoteQtd.getText()));
+            l.setQtdlixo(new Double(LoteProdEst.getText()));
+            LoteBLL.refreshEntity(l);
+            actualizaDados();
 
             String messag = "Com Sucesso!!";
             String titl = "Editado";
             int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
         }
     }//GEN-LAST:event_btEditMouseClicked
+
+    private void btElimMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btElimMouseClicked
+        DefaultTableModel model = (DefaultTableModel) tabLote.getModel();
+        if (tabLote.getSelectedRow() == -1) {
+            if (tabLote.getRowCount() == 0) {
+                String messag = "Tabela Vazia!!";
+                String titl = "Sem dados";
+                int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+            } else {
+                String messag = "Aviso!!";
+                String titl = "Selecione um Lote";
+                int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+            }
+        } else {
+
+            int id = Integer.parseInt(model.getValueAt(tabLote.getSelectedRow(), 6).toString());
+            LoteBLL.delete(LoteBLL.retrieve(id));
+
+            jDateChooser1.setDate(null);
+            lotePrec.setText("");
+            LoteProdEst.setText("");
+            LoteQtd.setText("");
+
+            actualizaDados();
+            String messag = "Com Sucesso!!";
+            String titl = "Eliminado";
+            int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+        }
+    }//GEN-LAST:event_btElimMouseClicked
 
     public void limparJTable() {
         javax.swing.table.DefaultTableModel model2 = (javax.swing.table.DefaultTableModel) tabLote.getModel();
@@ -377,7 +409,6 @@ public class Lotes extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField LoteProdEst;
     private javax.swing.JTextField LoteQtd;
-    private javax.swing.JTextField QtdAtual;
     private javax.swing.JButton btEdit;
     private javax.swing.JButton btElim;
     private javax.swing.JButton btNovo2;
@@ -390,7 +421,6 @@ public class Lotes extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelRecebeFunc1;
     private javax.swing.JTextField lotePrec;
