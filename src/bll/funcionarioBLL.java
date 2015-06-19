@@ -51,7 +51,7 @@ public static void create(Funcionario func)
         em.clear();       
     }
     
-      public static List retrieveAll(){
+      public static List<Funcionario> retrieveAll(){
         List<Funcionario> listafunc = new ArrayList<>();
         EntityManager em = BLLEntityManager.getEntityManager();
         Query q = em.createNamedQuery("Funcionario.findAll");
@@ -64,4 +64,18 @@ public static void create(Funcionario func)
         EntityManager em = BLLEntityManager.getEntityManager();
         em.refresh(func);
     }
+    
+      public static Funcionario retrieveDesc(String desc){
+        EntityManager em = BLLEntityManager.getEntityManager();
+        
+        Query q = em.createNativeQuery("Select * from Funcionario where NOME = ?",Funcionario.class);
+        q.setParameter (1,desc) ; 
+         if(!q.getResultList().isEmpty()){
+             Funcionario func = (Funcionario)q.getResultList().get(0);
+        return func;
+         }
+        
+        return null; 
+    }
+    
 }

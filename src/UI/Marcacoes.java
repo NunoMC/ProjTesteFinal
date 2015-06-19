@@ -5,17 +5,66 @@
  */
 package UI;
 
+import bll.ClienteBLL;
+import bll.MarcacaoBLL;
+import bll.VendaMarcBLL;
+import bll.funcionarioBLL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.Cliente;
+import model.Funcionario;
+import model.Marcacao;
+import model.VendaMarc;
+
 /**
  *
  * @author NunoM
  */
 public class Marcacoes extends javax.swing.JPanel {
 
-    /**
-     * Creates new form Marcacoes
-     */
+    private Marcacao marc;
+    private Cliente cli;
+    private Funcionario func;
+
     public Marcacoes() {
         initComponents();
+
+        List<String> lista = new ArrayList<>();
+        combFunc.removeAllItems();
+
+        for (Funcionario f : funcionarioBLL.retrieveAll()) {
+            lista.add(f.getNome());
+        }
+
+        for (int registro = 0; registro < lista.size(); registro++) {
+            combFunc.addItem(lista.get(registro));
+
+        }
+
+        List<String> lista2 = new ArrayList<>();
+        ComboCli.removeAllItems();
+
+        for (Cliente c : ClienteBLL.retrieveALL()) {
+            lista2.add(c.getNome());
+        }
+
+        for (int registro = 0; registro < lista2.size(); registro++) {
+            ComboCli.addItem(lista2.get(registro));
+
+        }
+
+        actualizaDados();
+
     }
 
     /**
@@ -31,22 +80,22 @@ public class Marcacoes extends javax.swing.JPanel {
         jLabel6 = new javax.swing.JLabel();
         labelRecebeFunc1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tabMarc = new javax.swing.JTable();
         btElim = new javax.swing.JButton();
         btEdit = new javax.swing.JButton();
         btNovo = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
+        combFunc = new javax.swing.JComboBox();
         jLabel3 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox();
+        ComboCli = new javax.swing.JComboBox();
         jLabel4 = new javax.swing.JLabel();
-        jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        dataMarc = new com.toedter.calendar.JDateChooser();
         jLabel5 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         MarcLocal = new javax.swing.JTextField();
         MarcDesc = new javax.swing.JTextField();
-        jDateChooser2 = new com.toedter.calendar.JDateChooser();
+        dataServ = new com.toedter.calendar.JDateChooser();
 
         jLabel1.setFont(new java.awt.Font("Times New Roman", 0, 24)); // NOI18N
         jLabel1.setText("Marcações");
@@ -54,29 +103,54 @@ public class Marcacoes extends javax.swing.JPanel {
         jLabel6.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
         jLabel6.setText("Funcionário:");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tabMarc.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Funcionário", "Cliente", "Descrição", "Data Marcação", "Data Serviço", "Local"
+                "Funcionário", "Cliente", "Descrição", "Data Marcação", "Data Serviço", "Local", "id"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        tabMarc.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabMarcMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tabMarc);
+        if (tabMarc.getColumnModel().getColumnCount() > 0) {
+            tabMarc.getColumnModel().getColumn(6).setMinWidth(0);
+            tabMarc.getColumnModel().getColumn(6).setPreferredWidth(0);
+            tabMarc.getColumnModel().getColumn(6).setMaxWidth(0);
+        }
 
         btElim.setText("Eliminar");
+        btElim.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btElimMouseClicked(evt);
+            }
+        });
 
         btEdit.setText("Editar");
+        btEdit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btEditMouseClicked(evt);
+            }
+        });
 
         btNovo.setText("Novo");
+        btNovo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btNovoMouseClicked(evt);
+            }
+        });
         btNovo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btNovoActionPerformed(evt);
@@ -84,6 +158,12 @@ public class Marcacoes extends javax.swing.JPanel {
         });
 
         jLabel2.setText("Funcionário:");
+
+        combFunc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                combFuncActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Cliente:");
 
@@ -117,12 +197,12 @@ public class Marcacoes extends javax.swing.JPanel {
                                     .addComponent(jLabel3))
                                 .addGap(34, 34, 34)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jComboBox2, 0, 200, Short.MAX_VALUE)
-                                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                    .addComponent(ComboCli, 0, 200, Short.MAX_VALUE)
+                                    .addComponent(combFunc, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)))
+                                .addComponent(dataMarc, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)))
                         .addGap(28, 28, 28)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -132,7 +212,7 @@ public class Marcacoes extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(MarcDesc)
-                                    .addComponent(jDateChooser2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                    .addComponent(dataServ, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
@@ -162,7 +242,7 @@ public class Marcacoes extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(combFunc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(MarcLocal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btNovo))
@@ -174,15 +254,15 @@ public class Marcacoes extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
-                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ComboCli, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel7)
                             .addComponent(MarcDesc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btEdit))
                         .addGap(29, 29, 29)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jDateChooser1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jDateChooser2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(dataMarc, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dataServ, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(26, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -191,17 +271,194 @@ public class Marcacoes extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_btNovoActionPerformed
 
+    private void combFuncActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combFuncActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_combFuncActionPerformed
+
+    private void btNovoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btNovoMouseClicked
+        if (MarcDesc.getText().isEmpty() || MarcLocal.getText().isEmpty() || dataMarc.getDateFormatString().isEmpty() || dataServ.getDateFormatString().isEmpty()) {
+            String messag = "Campos Vazios!!";
+            String titl = "Insira Nome e Morada";
+            int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+        } else {
+            marc = new Marcacao();
+            cli = new Cliente();
+            func = new Funcionario();
+            String idItem = (String) combFunc.getSelectedItem();
+            Funcionario f = funcionarioBLL.retrieveDesc(idItem);
+            String idItem2 = (String) ComboCli.getSelectedItem();
+
+            Cliente c = ClienteBLL.retrieveDesc(idItem2);
+           
+            Calendar calendar = new GregorianCalendar();
+
+            marc.setDataMarcacao(calendar.getTime());
+            marc.setDataServico(calendar.getTime());
+            marc.setDescricao(MarcDesc.getText());
+            marc.setLocal(MarcLocal.getText());
+            marc.setIdCliente(c);
+            marc.setIdFuncionario(f);
+
+            MarcacaoBLL.create(marc);
+
+            actualizaDados();
+
+        }
+    }//GEN-LAST:event_btNovoMouseClicked
+
+    private void btEditMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btEditMouseClicked
+        DefaultTableModel model = (DefaultTableModel) tabMarc.getModel();
+        if (tabMarc.getSelectedRow() == -1) {
+            if (tabMarc.getRowCount() == 0) {
+                String messag = "Tabela Vazia!!";
+                String titl = "Sem dados";
+                int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+            } else {
+                String messag = "Aviso!!";
+                String titl = "Selecione um Lote";
+                int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+            }
+        } else {
+
+            marc = new Marcacao();
+            cli = new Cliente();
+            func = new Funcionario();
+            int id = Integer.parseInt(model.getValueAt(tabMarc.getSelectedRow(), 6).toString());
+
+            marc = MarcacaoBLL.retrieve(id);
+            String idItem = (String) combFunc.getSelectedItem();
+            String idItem2 = (String) ComboCli.getSelectedItem();
+
+            Cliente c = ClienteBLL.retrieveDesc(idItem2);
+            Funcionario f = funcionarioBLL.retrieveDesc(idItem);
+
+            marc.setIdCliente(c);
+            marc.setIdFuncionario(f);
+            String data = (String) model.getValueAt(tabMarc.getSelectedRow(), 3);
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            Date date = null;
+            String data2 = (String) model.getValueAt(tabMarc.getSelectedRow(), 4);
+            DateFormat df2 = new SimpleDateFormat("dd/MM/yyyy");
+            Date date2 = null;
+            try {
+                date = df.parse(data);
+                date2 = df2.parse(data2);
+            } catch (ParseException ex) {
+                Logger.getLogger(Lotes.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            marc.setDataMarcacao(dataMarc.getDate());
+            marc.setDataServico(dataServ.getDate());
+            marc.setDescricao(MarcDesc.getText());
+            marc.setLocal(MarcLocal.getText());
+            MarcacaoBLL.refreshEntity(marc);
+
+            actualizaDados();
+
+            String messag = "Com Sucesso!!";
+            String titl = "Editado";
+            int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+        }
+    }//GEN-LAST:event_btEditMouseClicked
+
+    private void tabMarcMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabMarcMouseClicked
+        DefaultTableModel model = (DefaultTableModel) tabMarc.getModel();
+
+        String idItem = model.getValueAt(tabMarc.getSelectedRow(), 0).toString();
+        combFunc.setSelectedItem(idItem);
+        String idItem2 = model.getValueAt(tabMarc.getSelectedRow(), 1).toString();
+        ComboCli.setSelectedItem(idItem2);
+        String data = (String) model.getValueAt(tabMarc.getSelectedRow(), 3);
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = null;
+        String data2 = (String) model.getValueAt(tabMarc.getSelectedRow(), 4);
+        DateFormat df2 = new SimpleDateFormat("dd/MM/yyyy");
+        Date date2 = null;
+        try {
+            date = df.parse(data);
+            date2 = df2.parse(data2);
+        } catch (ParseException ex) {
+            Logger.getLogger(Lotes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        dataMarc.setDate(date);
+        dataServ.setDate(date2);
+
+        MarcDesc.setText(model.getValueAt(tabMarc.getSelectedRow(), 2).toString());
+        MarcLocal.setText(model.getValueAt(tabMarc.getSelectedRow(), 5).toString());
+
+    }//GEN-LAST:event_tabMarcMouseClicked
+
+    private void btElimMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btElimMouseClicked
+         DefaultTableModel model = (DefaultTableModel) tabMarc.getModel();
+        if (tabMarc.getSelectedRow() == -1) {
+            if (tabMarc.getRowCount() == 0) {
+                String messag = "Tabela Vazia!!";
+                String titl = "Sem dados";
+                int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+            } else {
+                String messag = "Aviso!!";
+                String titl = "Selecione um Lote";
+                int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+            }
+        } else {
+
+            int id = Integer.parseInt(model.getValueAt(tabMarc.getSelectedRow(), 6).toString());
+            
+            for (VendaMarc a : VendaMarcBLL.retrieveVendaMarc(id)) {
+                VendaMarcBLL.delete(a);
+            }
+            
+            
+            MarcacaoBLL.delete(MarcacaoBLL.retrieve(id));
+            
+             
+            dataMarc.setDate(null);
+            dataServ.setDate(null);
+            MarcDesc.setText("");
+            MarcLocal.setText("");
+            
+
+            actualizaDados();
+            String messag = "Com Sucesso!!";
+            String titl = "Eliminado";
+            int reply = JOptionPane.showConfirmDialog(null, messag, titl, JOptionPane.DEFAULT_OPTION);
+        }
+    }//GEN-LAST:event_btElimMouseClicked
+
+    public void limparJTable() {
+        javax.swing.table.DefaultTableModel model2 = (javax.swing.table.DefaultTableModel) tabMarc.getModel();
+        model2.setRowCount(0);
+    }
+
+    public void actualizaDados() {
+
+        limparJTable();
+
+        if (MarcacaoBLL.retrieveAll() != null) {
+            javax.swing.table.DefaultTableModel model1 = (javax.swing.table.DefaultTableModel) tabMarc.getModel();
+            for (Marcacao m : MarcacaoBLL.retrieveAll()) {
+                DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                Date startDate;
+                String newDateString = df.format(m.getDataMarcacao());
+                String newDateString2 = df.format(m.getDataServico());
+
+                model1.addRow(new Object[]{m.getIdFuncionario().getNome(), m.getIdCliente().getNome(), m.getDescricao(), newDateString, newDateString2, m.getLocal(),
+                    m.getIdMarcacao()});
+            }
+        }
+
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox ComboCli;
     private javax.swing.JTextField MarcDesc;
     private javax.swing.JTextField MarcLocal;
     private javax.swing.JButton btEdit;
     private javax.swing.JButton btElim;
     private javax.swing.JButton btNovo;
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JComboBox jComboBox2;
-    private com.toedter.calendar.JDateChooser jDateChooser1;
-    private com.toedter.calendar.JDateChooser jDateChooser2;
+    private javax.swing.JComboBox combFunc;
+    private com.toedter.calendar.JDateChooser dataMarc;
+    private com.toedter.calendar.JDateChooser dataServ;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -211,7 +468,7 @@ public class Marcacoes extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel labelRecebeFunc1;
+    private javax.swing.JTable tabMarc;
     // End of variables declaration//GEN-END:variables
 }

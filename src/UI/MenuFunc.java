@@ -24,6 +24,7 @@ public class MenuFunc extends javax.swing.JFrame {
     
     private JPanel currentView=null;
     private HashMap<Integer,JPanel> views;
+  
 
     /**
      * Creates new form MenuFunc
@@ -32,6 +33,8 @@ public class MenuFunc extends javax.swing.JFrame {
         initComponents();
          views=new HashMap<>();
         jPanel1.setLayout(new FlowLayout());
+       
+       
     }
  private void closeCurrentView(){
         if (currentView != null){

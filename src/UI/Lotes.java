@@ -41,10 +41,11 @@ public class Lotes extends javax.swing.JPanel {
 
     private Lote l;
     private Produto prod;
+  
 
-    public Lotes() {
+    public Lotes() {  
         initComponents();
-
+       
         List<String> lista = new ArrayList<>();
         comboProd.removeAllItems();
 
@@ -56,6 +57,8 @@ public class Lotes extends javax.swing.JPanel {
             comboProd.addItem(lista.get(registro));
 
         }
+        
+  
         actualizaDados();
     }
 

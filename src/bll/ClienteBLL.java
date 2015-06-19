@@ -72,4 +72,18 @@ public class ClienteBLL {
         em.getTransaction().commit();
         em.clear(); 
     }
+    
+      public static Cliente retrieveDesc(String desc){
+        EntityManager em = BLLEntityManager.getEntityManager();
+        
+        Query q = em.createNativeQuery("Select * from Cliente where NOME = ?",Cliente.class);
+        q.setParameter (1,desc) ; 
+         if(!q.getResultList().isEmpty()){
+             Cliente cli = (Cliente)q.getResultList().get(0);
+        return cli;
+         }
+        
+        return null; 
+    }
+    
 }

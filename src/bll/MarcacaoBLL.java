@@ -66,7 +66,7 @@ public class MarcacaoBLL {
         em.clear(); 
     }
     
-      public static List retrieveAll(){
+      public static List<Marcacao> retrieveAll(){
         List<Marcacao> marc = new ArrayList<>();
         EntityManager em = BLLEntityManager.getEntityManager();
         Query q = em.createNamedQuery("Marcacao.findAll");
